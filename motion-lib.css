@@ -1,0 +1,441 @@
+/* =========================================================
+   新北住都中心 CSS 動畫庫 Motion Lib  v1.0
+   64 式網站動態 ‧ 為「社宅 SOP 知識庫」打造
+   命名規則：所有 class 以 mo- 開頭；可調參數皆為 CSS 變數 --mo-*
+   ‧ --mo-color  主色      ‧ --mo-accent 輔色
+   ‧ --mo-dur    動畫長度  ‧ --mo-delay  延遲
+   ‧ --mo-size   尺寸      ‧ --i         依序動畫的序號
+   ========================================================= */
+
+/* ==== @mo:tokens ==== */
+:root{
+  --mo-color:#004A85;      /* 住都藍 */
+  --mo-accent:#F28C28;     /* 暖橘 */
+  --mo-success:#2E9E6B;
+  --mo-danger:#E0453A;
+  --mo-warn:#F2B705;
+  --mo-ink:#1E2A3A;
+  --mo-paper:#FFFDF8;
+  --mo-ease-out:cubic-bezier(.22,1,.36,1);
+  --mo-ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --mo-ease-inout:cubic-bezier(.65,0,.35,1);
+}
+/* 基礎元件（示範用，可替換成自家樣式） */
+.mo-card{display:inline-flex;align-items:center;gap:.5em;padding:.7em 1.1em;border-radius:14px;background:#fff;color:var(--mo-ink);box-shadow:0 4px 14px -6px rgba(0,40,80,.28);font-weight:700}
+.mo-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;padding:.65em 1.3em;border:0;border-radius:999px;background:var(--mo-color);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+/* 捲動到畫面才播放：加上 .mo-onview，並以 motion-helpers.js 的 Mo.onView() 加入 .is-in */
+.mo-onview:not(.is-in),.mo-onview:not(.is-in) *{animation-play-state:paused!important}
+/* 依序動畫的序號（不寫 --i 時自動補上） */
+:is(.mo-stagger,.mo-timeline)>:nth-child(2){--i:1}:is(.mo-stagger,.mo-timeline)>:nth-child(3){--i:2}
+:is(.mo-stagger,.mo-timeline)>:nth-child(4){--i:3}:is(.mo-stagger,.mo-timeline)>:nth-child(5){--i:4}
+:is(.mo-stagger,.mo-timeline)>:nth-child(6){--i:5}:is(.mo-stagger,.mo-timeline)>:nth-child(7){--i:6}
+:is(.mo-stagger,.mo-timeline)>:nth-child(8){--i:7}:is(.mo-stagger,.mo-timeline)>:nth-child(9){--i:8}
+/* 無障礙：使用者設定「減少動態」時關閉動畫 */
+@media (prefers-reduced-motion:reduce){
+  [class*="mo-"],[class*="mo-"] *,[class*="mo-"]::before,[class*="mo-"]::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* ==== @mo:fade-up ==== */
+.mo-fade-up{animation:mo-fade-up var(--mo-dur,.8s) var(--mo-ease-out) var(--mo-delay,0s) both}
+@keyframes mo-fade-up{from{opacity:0;transform:translateY(var(--mo-distance,24px))}to{opacity:1;transform:none}}
+
+/* ==== @mo:pop-in ==== */
+.mo-pop-in{animation:mo-pop-in var(--mo-dur,.6s) var(--mo-ease-out) var(--mo-delay,0s) both}
+@keyframes mo-pop-in{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.08)}80%{transform:scale(.97)}100%{opacity:1;transform:scale(1)}}
+
+/* ==== @mo:wipe-reveal ==== */
+.mo-wipe-reveal{position:relative;display:inline-block;animation:mo-wipe-txt var(--mo-dur,1s) linear var(--mo-delay,0s) both}
+.mo-wipe-reveal::after{content:"";position:absolute;inset:0;background:var(--mo-color);border-radius:inherit;animation:mo-wipe-bar var(--mo-dur,1s) var(--mo-ease-inout) var(--mo-delay,0s) both}
+@keyframes mo-wipe-bar{0%{transform:scaleX(0);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}50.1%{transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
+@keyframes mo-wipe-txt{0%,49%{color:transparent}50%,100%{color:inherit}}
+
+/* ==== @mo:blur-in ==== */
+.mo-blur-in{animation:mo-blur-in var(--mo-dur,.9s) var(--mo-ease-out) var(--mo-delay,0s) both}
+@keyframes mo-blur-in{from{opacity:0;filter:blur(14px);transform:scale(1.08)}to{opacity:1;filter:none;transform:none}}
+
+/* ==== @mo:flip-in ==== */
+.mo-flip-in{transform-origin:50% 0;animation:mo-flip-in var(--mo-dur,.8s) var(--mo-ease-spring) var(--mo-delay,0s) both}
+@keyframes mo-flip-in{from{opacity:0;transform:perspective(600px) rotateX(-95deg)}to{opacity:1;transform:perspective(600px) rotateX(0)}}
+
+/* ==== @mo:stagger ==== */
+.mo-stagger>*{animation:mo-fade-up var(--mo-dur,.6s) var(--mo-ease-out) calc(var(--mo-delay,0s) + var(--i,0) * var(--mo-gap,.1s)) both}
+
+/* ==== @mo:slide-in ==== */
+.mo-slide-in{animation:mo-slide-in var(--mo-dur,.7s) var(--mo-ease-out) var(--mo-delay,0s) both}
+@keyframes mo-slide-in{from{opacity:0;transform:translateX(var(--mo-distance,-48px))}to{opacity:1;transform:none}}
+
+/* ==== @mo:char-rise ==== */
+.mo-char-rise>span{display:inline-block;animation:mo-char-rise var(--mo-dur,.6s) var(--mo-ease-spring) calc(var(--mo-delay,0s) + var(--i,0) * var(--mo-gap,.06s)) both}
+@keyframes mo-char-rise{from{opacity:0;transform:translateY(.9em) rotate(10deg)}to{opacity:1;transform:none}}
+
+/* ==== @mo:typewriter ==== */
+.mo-typewriter{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;border-right:.08em solid var(--mo-color);width:calc(var(--mo-chars,8) * 1em + .1em);animation:mo-type var(--mo-dur,2s) steps(var(--mo-chars,8)) var(--mo-delay,0s) both,mo-caret .8s step-end infinite}
+@keyframes mo-type{from{width:0}}
+@keyframes mo-caret{50%{border-right-color:transparent}}
+
+/* ==== @mo:marker ==== */
+.mo-marker{background:linear-gradient(transparent 58%,var(--mo-mark,#FFE27A) 58%) no-repeat 0 0/0% 100%;animation:mo-marker var(--mo-dur,.9s) var(--mo-ease-out) var(--mo-delay,.2s) both}
+@keyframes mo-marker{to{background-size:100% 100%}}
+
+/* ==== @mo:shine ==== */
+.mo-shine{background:linear-gradient(110deg,var(--mo-color) 40%,#9fd3ff 50%,var(--mo-color) 60%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mo-shine var(--mo-dur,2.6s) linear var(--mo-delay,0s) infinite}
+@keyframes mo-shine{from{background-position:130% 0}to{background-position:-30% 0}}
+
+/* ==== @mo:count-up ==== */
+@property --mo-num{syntax:"<integer>";initial-value:0;inherits:false}
+.mo-count-up{counter-reset:mo-num var(--mo-num);animation:mo-count var(--mo-dur,1.6s) var(--mo-ease-out) var(--mo-delay,0s) both;font-variant-numeric:tabular-nums}
+.mo-count-up::before{content:counter(mo-num)}
+@keyframes mo-count{from{--mo-num:0}to{--mo-num:var(--mo-to,100)}}
+
+/* ==== @mo:wave-text ==== */
+.mo-wave-text>span{display:inline-block;animation:mo-wave-text var(--mo-dur,1.4s) ease-in-out calc(var(--i,0) * .08s) infinite}
+@keyframes mo-wave-text{0%,40%,100%{transform:none}20%{transform:translateY(-.35em)}}
+
+/* ==== @mo:underline ==== */
+.mo-underline{text-decoration:none;color:inherit;background:linear-gradient(var(--mo-color),var(--mo-color)) no-repeat 100% 100%/0% .12em;transition:background-size var(--mo-dur,.4s) var(--mo-ease-out)}
+.mo-underline:hover,.mo-underline:focus-visible{background-size:100% .12em;background-position:0 100%}
+
+/* ==== @mo:press ==== */
+.mo-press{transition:transform .18s var(--mo-ease-spring),box-shadow .18s}
+.mo-press:hover{transform:translateY(-2px);box-shadow:0 8px 18px -8px rgba(0,40,80,.5)}
+.mo-press:active{transform:translateY(1px) scale(.95);box-shadow:none}
+
+/* ==== @mo:jelly ==== */
+.mo-jelly:hover,.mo-jelly.is-play{animation:mo-jelly var(--mo-dur,.7s) both}
+@keyframes mo-jelly{0%{transform:scale(1,1)}30%{transform:scale(1.18,.82)}40%{transform:scale(.86,1.14)}55%{transform:scale(1.06,.94)}72%{transform:scale(.98,1.02)}100%{transform:scale(1,1)}}
+
+/* ==== @mo:ripple ==== */
+.mo-ripple{position:relative;overflow:hidden;isolation:isolate}
+.mo-ripple-ink{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--d);border-radius:50%;background:currentColor;opacity:.35;transform:translate(-50%,-50%) scale(0);animation:mo-ripple var(--mo-dur,.65s) var(--mo-ease-out) forwards;pointer-events:none;z-index:-1}
+@keyframes mo-ripple{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
+
+/* ==== @mo:shake ==== */
+.mo-shake{animation:mo-shake var(--mo-dur,.5s) var(--mo-delay,0s) both}
+@keyframes mo-shake{0%,100%{transform:none}15%{transform:translateX(-8px)}30%{transform:translateX(7px)}45%{transform:translateX(-5px)}60%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
+
+/* ==== @mo:check-draw ==== */
+.mo-check-draw{width:var(--mo-size,64px);height:auto;overflow:visible}
+.mo-check-draw circle{fill:var(--mo-success);transform-box:fill-box;transform-origin:center;animation:mo-check-bg var(--mo-dur,.5s) var(--mo-ease-spring) var(--mo-delay,0s) both}
+.mo-check-draw path{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:mo-draw .4s var(--mo-ease-out) calc(var(--mo-delay,0s) + var(--mo-dur,.5s) * .7) forwards}
+@keyframes mo-check-bg{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes mo-draw{to{stroke-dashoffset:0}}
+
+/* ==== @mo:heart ==== */
+.mo-heart{position:relative;display:inline-grid;place-items:center;width:var(--mo-size,52px);aspect-ratio:1;border:0;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 4px 14px -6px rgba(0,40,80,.3)}
+.mo-heart svg{width:55%;fill:none;stroke:#9aa7b4;stroke-width:2;transition:fill .2s,stroke .2s}
+.mo-heart::before{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--mo-danger);opacity:0;transform:scale(.6)}
+.mo-heart.is-on svg{fill:var(--mo-danger);stroke:var(--mo-danger);animation:mo-heart-pop .45s var(--mo-ease-spring)}
+.mo-heart.is-on::before{animation:mo-heart-ring .5s var(--mo-ease-out)}
+@keyframes mo-heart-pop{0%{transform:scale(.3)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes mo-heart-ring{0%{opacity:1;transform:scale(.6)}100%{opacity:0;transform:scale(1.5)}}
+
+/* ==== @mo:toast ==== */
+.mo-toast{display:inline-flex;align-items:center;gap:.5em;padding:.7em 1.2em;border-radius:12px;background:var(--mo-ink);color:#fff;font-weight:700;box-shadow:0 10px 24px -10px rgba(0,0,0,.45);animation:mo-toast var(--mo-dur,2.8s) var(--mo-ease-out) var(--mo-delay,0s) both}
+.mo-toast::before{content:"✓";display:grid;place-items:center;width:1.4em;height:1.4em;border-radius:50%;background:var(--mo-success);font-size:.8em}
+@keyframes mo-toast{0%{opacity:0;transform:translateY(18px) scale(.95)}12%{opacity:1;transform:none}85%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-10px)}}
+
+/* ==== @mo:lift ==== */
+.mo-lift{transition:transform var(--mo-dur,.35s) var(--mo-ease-out),box-shadow var(--mo-dur,.35s) var(--mo-ease-out)}
+.mo-lift:hover{transform:translateY(-6px);box-shadow:0 16px 30px -14px rgba(0,40,80,.45)}
+
+/* ==== @mo:toggle ==== */
+.mo-toggle{display:inline-flex;align-items:center;gap:.6em;cursor:pointer;font-weight:700}
+.mo-toggle input{position:absolute;opacity:0;pointer-events:none}
+.mo-toggle span{position:relative;width:52px;height:30px;border-radius:99px;background:#cfd6de;transition:background var(--mo-dur,.3s)}
+.mo-toggle span::after{content:"";position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:99px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:all var(--mo-dur,.3s) var(--mo-ease-spring)}
+.mo-toggle:active span::after{width:28px}
+.mo-toggle input:checked+span{background:var(--mo-color)}
+.mo-toggle input:checked+span::after{left:calc(100% - 26px)}
+.mo-toggle:active input:checked+span::after{left:calc(100% - 32px)}
+.mo-toggle input:focus-visible+span{outline:3px solid var(--mo-accent);outline-offset:2px}
+
+/* ==== @mo:tabs ==== */
+.mo-tabs{--n:3;position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);padding:4px;border-radius:14px;background:#eef1f5;font-weight:700}
+.mo-tabs input{position:absolute;opacity:0;pointer-events:none}
+.mo-tabs label{position:relative;z-index:1;padding:.55em .8em;text-align:center;cursor:pointer;color:#6b7785;transition:color .3s}
+.mo-tabs label:has(input:checked){color:#fff}
+.mo-tabs label:has(input:focus-visible){outline:2px solid var(--mo-accent);border-radius:10px}
+.mo-tabs-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px) / var(--n));border-radius:10px;background:var(--mo-color);transform:translateX(calc(var(--idx,0) * 100%));transition:transform var(--mo-dur,.45s) var(--mo-ease-spring)}
+.mo-tabs:has(label:nth-of-type(2) input:checked){--idx:1}
+.mo-tabs:has(label:nth-of-type(3) input:checked){--idx:2}
+.mo-tabs:has(label:nth-of-type(4) input:checked){--idx:3}
+.mo-tabs:has(label:nth-of-type(5) input:checked){--idx:4}
+
+/* ==== @mo:accordion ==== */
+.mo-accordion{border-radius:14px;background:#fff;box-shadow:0 4px 14px -8px rgba(0,40,80,.3);overflow:hidden}
+.mo-acc-head{display:flex;width:100%;justify-content:space-between;align-items:center;gap:1em;padding:.8em 1em;border:0;background:none;font:inherit;font-weight:700;color:var(--mo-ink);cursor:pointer}
+.mo-acc-head::after{content:"";width:.55em;height:.55em;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform var(--mo-dur,.4s) var(--mo-ease-spring)}
+.mo-accordion.is-on .mo-acc-head::after{transform:rotate(225deg)}
+.mo-acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--mo-dur,.4s) var(--mo-ease-out)}
+.mo-acc-body>div{overflow:hidden;padding:0 1em;color:#556}
+.mo-accordion.is-on .mo-acc-body{grid-template-rows:1fr}
+.mo-accordion.is-on .mo-acc-body>div{padding-bottom:.9em}
+
+/* ==== @mo:checkbox ==== */
+.mo-checkbox{display:inline-flex;align-items:center;gap:.6em;cursor:pointer;font-weight:700}
+.mo-checkbox input{position:absolute;opacity:0;pointer-events:none}
+.mo-checkbox svg{width:1.6em;height:1.6em;flex:none}
+.mo-checkbox rect{fill:#fff;stroke:#b8c2cc;stroke-width:2;transform-box:fill-box;transform-origin:center;transition:fill .2s,stroke .2s}
+.mo-checkbox path{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .35s var(--mo-ease-out) .1s}
+.mo-checkbox input:checked+svg rect{fill:var(--mo-color);stroke:var(--mo-color);animation:mo-check-squish .4s var(--mo-ease-spring)}
+.mo-checkbox input:checked+svg path{stroke-dashoffset:0}
+.mo-checkbox input:checked~span{color:#8a96a3;text-decoration:line-through;text-decoration-color:var(--mo-color)}
+.mo-checkbox span{transition:color .3s}
+@keyframes mo-check-squish{40%{transform:scale(.8)}100%{transform:scale(1)}}
+
+/* ==== @mo:radio ==== */
+.mo-radio{display:inline-flex;align-items:center;gap:.5em;cursor:pointer;font-weight:700}
+.mo-radio input{appearance:none;margin:0;width:1.3em;height:1.3em;border-radius:50%;border:2px solid #b8c2cc;display:grid;place-items:center;transition:border-color .2s;cursor:pointer}
+.mo-radio input::after{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--mo-color);transform:scale(0);transition:transform var(--mo-dur,.35s) var(--mo-ease-spring)}
+.mo-radio input:checked{border-color:var(--mo-color)}
+.mo-radio input:checked::after{transform:scale(1)}
+
+/* ==== @mo:flip-card ==== */
+.mo-flip-card{perspective:900px;width:var(--mo-size,180px);aspect-ratio:3/2;cursor:pointer}
+.mo-flip-inner{position:relative;height:100%;transform-style:preserve-3d;transition:transform var(--mo-dur,.7s) var(--mo-ease-spring)}
+.mo-flip-card:hover .mo-flip-inner,.mo-flip-card.is-on .mo-flip-inner{transform:rotateY(180deg)}
+.mo-flip-face{position:absolute;inset:0;display:grid;place-items:center;padding:.8em;border-radius:14px;backface-visibility:hidden;font-weight:700;text-align:center;background:#fff;box-shadow:0 6px 16px -8px rgba(0,40,80,.35)}
+.mo-flip-face--back{transform:rotateY(180deg);background:var(--mo-color);color:#fff}
+
+/* ==== @mo:stepper ==== */
+.mo-stepper{--n:5;--step:1;position:relative;font-weight:700}
+.mo-stepper ol{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);margin:0;padding:0;list-style:none;counter-reset:mo-step}
+.mo-stepper ol::before,.mo-stepper ol::after{content:"";position:absolute;top:15px;left:calc(50% / var(--n));height:4px;border-radius:4px;background:#dfe5ec}
+.mo-stepper ol::before{right:calc(50% / var(--n))}
+.mo-stepper ol::after{background:var(--mo-color);width:calc((100% - 100% / var(--n)) * (var(--step) - 1) / (var(--n) - 1));transition:width var(--mo-dur,.6s) var(--mo-ease-out)}
+.mo-stepper li{position:relative;z-index:1;display:grid;justify-items:center;gap:.4em;font-size:.8em;color:#8a96a3;counter-increment:mo-step;transition:color .3s}
+.mo-stepper li::before{content:counter(mo-step);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#fff;border:3px solid #dfe5ec;transition:all .35s var(--mo-ease-spring)}
+.mo-stepper li.is-done{color:var(--mo-ink)}
+.mo-stepper li.is-done::before{content:"✓";background:var(--mo-color);border-color:var(--mo-color);color:#fff}
+.mo-stepper li.is-current{color:var(--mo-color)}
+.mo-stepper li.is-current::before{border-color:var(--mo-color);color:var(--mo-color);transform:scale(1.15);animation:mo-step-glow 1.6s ease-out infinite}
+@keyframes mo-step-glow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mo-color) 45%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+
+/* ==== @mo:timeline ==== */
+.mo-timeline{position:relative;margin:0;padding:0 0 0 30px;list-style:none}
+.mo-timeline::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:3px;border-radius:3px;background:var(--mo-color);transform-origin:top;animation:mo-line-y var(--mo-dur,1.6s) var(--mo-ease-inout) var(--mo-delay,0s) both}
+.mo-timeline>li{position:relative;padding:.25em 0 .6em;animation:mo-slide-in .5s var(--mo-ease-out) calc(var(--mo-delay,0s) + var(--i,0) * var(--mo-gap,.35s)) both;--mo-distance:-14px}
+.mo-timeline>li::before{content:"";position:absolute;left:-27px;top:.5em;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--mo-color);box-sizing:border-box}
+@keyframes mo-line-y{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* ==== @mo:flow-dash ==== */
+.mo-flow-dash{fill:none;stroke:var(--mo-color);stroke-width:3;stroke-linecap:round;stroke-dasharray:8 8;animation:mo-flow var(--mo-dur,.8s) linear infinite}
+@keyframes mo-flow{to{stroke-dashoffset:-16}}
+
+/* ==== @mo:branch ==== */
+.mo-branch{width:var(--mo-size,240px);overflow:visible;font-weight:700}
+.mo-branch *{transform-box:fill-box;transform-origin:center}
+.mo-branch-node{fill:var(--mo-accent);animation:mo-br-node var(--mo-dur,3.6s) var(--mo-ease-out) infinite}
+.mo-branch-path{fill:none;stroke:var(--mo-color);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;animation:mo-br-path var(--mo-dur,3.6s) var(--mo-ease-inout) infinite}
+.mo-branch-end{animation:mo-br-end var(--mo-dur,3.6s) var(--mo-ease-spring) infinite}
+.mo-branch text{font-size:12px;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.mo-branch .mo-branch-label{fill:var(--mo-ink);font-size:11px}
+@keyframes mo-br-node{0%{opacity:0;transform:scale(.5)}10%{opacity:1;transform:scale(1.12)}16%,88%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@keyframes mo-br-path{0%,16%{stroke-dashoffset:1;opacity:1}42%,88%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes mo-br-end{0%,40%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1.12)}56%,88%{opacity:1;transform:scale(1)}100%{opacity:0}}
+
+/* ==== @mo:progress ==== */
+.mo-progress{height:var(--mo-size,14px);border-radius:99px;background:#e6ebf1;overflow:hidden}
+.mo-progress>i{display:block;height:100%;width:var(--mo-value,70%);border-radius:inherit;background:repeating-linear-gradient(-45deg,var(--mo-color) 0 10px,color-mix(in srgb,var(--mo-color) 78%,#fff) 10px 20px) 0 0/28.28px 100%;animation:mo-progress-fill var(--mo-dur,1.4s) var(--mo-ease-out) var(--mo-delay,0s) both,mo-stripes 1s linear infinite}
+@keyframes mo-progress-fill{from{width:0}}
+@keyframes mo-stripes{to{background-position:28.28px 0}}
+
+/* ==== @mo:lane-pass ==== */
+.mo-lane{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:6px;width:var(--mo-size,260px);height:110px;font-weight:700;font-size:.78em}
+.mo-lane>span{padding:.5em;border-radius:12px;background:#eef3f8;color:#5b6b7c;text-align:center}
+.mo-lane-token{position:absolute;top:46px;left:14%;display:grid;place-items:center;width:42px;height:50px;border-radius:6px;background:#fff;box-shadow:0 4px 10px -4px rgba(0,40,80,.4);font-size:1.4em;animation:mo-lane-move var(--mo-dur,3s) var(--mo-ease-inout) infinite}
+.mo-lane-token::before{content:"";width:60%;height:4px;border-radius:2px;background:var(--mo-color);box-shadow:0 8px 0 var(--mo-color),0 16px 0 #c9d3de}
+.mo-lane-ok{position:absolute;right:12%;top:34px;padding:.2em .6em;border-radius:99px;background:var(--mo-success);color:#fff;animation:mo-lane-ok var(--mo-dur,3s) var(--mo-ease-spring) infinite}
+@keyframes mo-lane-move{0%,12%{transform:none}50%,100%{transform:translateX(calc(var(--mo-size,260px) * .5)) rotate(4deg)}30%{transform:translate(calc(var(--mo-size,260px) * .25),-18px) rotate(-6deg)}}
+@keyframes mo-lane-ok{0%,52%{opacity:0;transform:scale(0)}62%{opacity:1;transform:scale(1.15)}68%,92%{opacity:1;transform:scale(1)}100%{opacity:0}}
+
+/* ==== @mo:ring-timer ==== */
+@property --mo-sec{syntax:"<integer>";initial-value:0;inherits:false}
+.mo-ring-timer{position:relative;display:inline-grid;place-items:center;width:var(--mo-size,110px);aspect-ratio:1}
+.mo-ring-timer svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.mo-ring-timer circle{fill:none;stroke-width:8}
+.mo-ring-timer .mo-ring-bg{stroke:#e3e9ef}
+.mo-ring-timer .mo-ring-fg{stroke:var(--mo-color);stroke-linecap:round;stroke-dasharray:1;animation:mo-ring var(--mo-dur,10s) linear infinite}
+.mo-ring-timer b{counter-reset:mo-sec var(--mo-sec);animation:mo-sec var(--mo-dur,10s) linear infinite;font-size:1.6em;font-variant-numeric:tabular-nums;color:var(--mo-ink)}
+.mo-ring-timer b::before{content:counter(mo-sec)}
+.mo-ring-timer small{position:absolute;bottom:22%;font-size:.7em;color:#7a8794;font-weight:700}
+@keyframes mo-ring{0%{stroke-dashoffset:0}75%{stroke:var(--mo-color)}80%,100%{stroke:var(--mo-danger)}100%{stroke-dashoffset:-1}}
+@keyframes mo-sec{from{--mo-sec:var(--mo-from,10)}to{--mo-sec:0}}
+
+/* ==== @mo:focus ==== */
+.mo-focus>*{transition:opacity var(--mo-dur,.35s),filter var(--mo-dur,.35s),transform var(--mo-dur,.35s) var(--mo-ease-out)}
+.mo-focus:hover>:not(:hover){opacity:.35;filter:grayscale(1)}
+.mo-focus>:hover{transform:scale(1.05)}
+
+/* ==== @mo:pulse-ring ==== */
+.mo-pulse{position:relative;isolation:isolate}
+.mo-pulse::before,.mo-pulse::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--mo-pulse-color,var(--mo-danger));animation:mo-pulse var(--mo-dur,2s) var(--mo-ease-out) infinite}
+.mo-pulse::after{animation-delay:calc(var(--mo-dur,2s) / 2)}
+@keyframes mo-pulse{from{opacity:.55;transform:scale(1)}to{opacity:0;transform:scale(2.2)}}
+
+/* ==== @mo:breathe ==== */
+.mo-breathe{animation:mo-breathe var(--mo-dur,2.4s) ease-in-out infinite}
+@keyframes mo-breathe{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mo-color) 0%,transparent)}50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--mo-color) 22%,transparent),0 0 24px 6px color-mix(in srgb,var(--mo-color) 30%,transparent)}}
+
+/* ==== @mo:blink ==== */
+.mo-blink{animation:mo-blink var(--mo-dur,1.2s) ease-in-out infinite}
+@keyframes mo-blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ==== @mo:bell ==== */
+.mo-bell{display:inline-block;transform-origin:50% 8%;animation:mo-bell var(--mo-dur,2.4s) ease-in-out infinite}
+@keyframes mo-bell{0%,40%,100%{transform:none}5%{transform:rotate(18deg)}10%{transform:rotate(-16deg)}15%{transform:rotate(12deg)}20%{transform:rotate(-8deg)}25%{transform:rotate(4deg)}30%{transform:rotate(0)}}
+
+/* ==== @mo:badge-pop ==== */
+.mo-badge{position:relative;display:inline-block}
+.mo-badge::after{content:attr(data-count);position:absolute;top:-.5em;right:-.7em;min-width:1.5em;padding:0 .35em;border-radius:99px;background:var(--mo-danger);color:#fff;font-size:.7em;font-weight:800;line-height:1.5em;text-align:center;box-shadow:0 0 0 2px #fff;animation:mo-pop-in var(--mo-dur,.5s) var(--mo-ease-out) var(--mo-delay,.3s) both}
+
+/* ==== @mo:marquee ==== */
+.mo-marquee{overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mo-marquee-track{display:flex;width:max-content;animation:mo-marquee var(--mo-dur,16s) linear infinite}
+.mo-marquee-track>*{padding-right:3em;white-space:nowrap}
+.mo-marquee:hover .mo-marquee-track{animation-play-state:paused}
+@keyframes mo-marquee{to{transform:translateX(-50%)}}
+
+/* ==== @mo:hazard ==== */
+.mo-hazard{background:repeating-linear-gradient(-45deg,var(--mo-warn) 0 14px,var(--mo-ink) 14px 28px) 0 0/39.6px 100%;animation:mo-hazard var(--mo-dur,1.2s) linear infinite}
+@keyframes mo-hazard{to{background-position:39.6px 0}}
+
+/* ==== @mo:attention ==== */
+.mo-attention{display:inline-block;animation:mo-attention var(--mo-dur,3s) ease-in-out infinite}
+@keyframes mo-attention{0%,78%,100%{transform:none}82%{transform:rotate(-7deg) scale(1.06)}86%{transform:rotate(7deg) scale(1.06)}90%{transform:rotate(-4deg)}94%{transform:rotate(2deg)}}
+
+/* ==== @mo:dots ==== */
+.mo-dots{display:inline-flex;gap:.4em}
+.mo-dots i{width:.7em;height:.7em;border-radius:50%;background:var(--mo-color);animation:mo-dots var(--mo-dur,1s) ease-in-out infinite}
+.mo-dots i:nth-child(2){animation-delay:.15s}.mo-dots i:nth-child(3){animation-delay:.3s}
+@keyframes mo-dots{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-.7em);opacity:1}}
+
+/* ==== @mo:spinner ==== */
+.mo-spinner{display:inline-block;width:var(--mo-size,44px);aspect-ratio:1;border-radius:50%;background:conic-gradient(from 0deg,transparent 10%,var(--mo-color));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px));mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px));animation:mo-spin var(--mo-dur,.9s) linear infinite}
+@keyframes mo-spin{to{transform:rotate(1turn)}}
+
+/* ==== @mo:skeleton ==== */
+.mo-skeleton{display:block;border-radius:8px;background:linear-gradient(90deg,#e8edf2 25%,#f6f8fa 45%,#e8edf2 65%) 0 0/300% 100%;animation:mo-skeleton var(--mo-dur,1.4s) ease-in-out infinite}
+@keyframes mo-skeleton{from{background-position:100% 0}to{background-position:0 0}}
+
+/* ==== @mo:indeterminate ==== */
+.mo-indeterminate{position:relative;height:6px;border-radius:99px;background:#e3e9ef;overflow:hidden}
+.mo-indeterminate::before{content:"";position:absolute;inset:0 auto 0 0;width:40%;border-radius:inherit;background:var(--mo-color);animation:mo-indet var(--mo-dur,1.3s) var(--mo-ease-inout) infinite}
+@keyframes mo-indet{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+
+/* ==== @mo:hourglass ==== */
+.mo-hourglass{width:var(--mo-size,40px);overflow:visible;animation:mo-hourglass var(--mo-dur,2.4s) var(--mo-ease-inout) infinite}
+.mo-hourglass path{fill:none;stroke:var(--mo-color);stroke-width:3;stroke-linejoin:round}
+.mo-hourglass .mo-sand-top{fill:var(--mo-accent);stroke:none;transform-box:fill-box;transform-origin:50% 100%;animation:mo-sand-top var(--mo-dur,2.4s) linear infinite}
+.mo-hourglass .mo-sand-bot{fill:var(--mo-accent);stroke:none;transform-box:fill-box;transform-origin:50% 100%;animation:mo-sand-bot var(--mo-dur,2.4s) linear infinite}
+@keyframes mo-hourglass{0%,70%{transform:rotate(0)}85%,100%{transform:rotate(180deg)}}
+@keyframes mo-sand-top{0%{transform:scaleY(1)}70%,100%{transform:scaleY(0)}}
+@keyframes mo-sand-bot{0%{transform:scaleY(0)}70%,100%{transform:scaleY(1)}}
+
+/* ==== @mo:page-wipe ==== */
+.mo-page-wipe{position:relative;overflow:hidden}
+.mo-page-wipe::before,.mo-page-wipe::after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;transform:translateX(-101%);animation:mo-wipe-page var(--mo-dur,1.2s) var(--mo-ease-inout) var(--mo-delay,0s) both}
+.mo-page-wipe::before{background:var(--mo-accent)}
+.mo-page-wipe::after{background:var(--mo-color);animation-delay:calc(var(--mo-delay,0s) + .1s)}
+@keyframes mo-wipe-page{0%{transform:translateX(-101%)}45%,55%{transform:translateX(0)}100%{transform:translateX(101%)}}
+
+/* ==== @mo:wave-divider ==== */
+.mo-wave{position:relative;height:var(--mo-size,60px);overflow:hidden}
+.mo-wave svg{position:absolute;bottom:0;left:0;width:200%;height:100%;animation:mo-wave var(--mo-dur,6s) linear infinite}
+.mo-wave svg:nth-child(2){opacity:.5;animation-duration:calc(var(--mo-dur,6s) * 1.7);animation-direction:reverse}
+.mo-wave path{fill:var(--mo-color)}
+@keyframes mo-wave{to{transform:translateX(-50%)}}
+
+/* ==== @mo:float ==== */
+.mo-float{animation:mo-float var(--mo-dur,3.2s) ease-in-out infinite}
+@keyframes mo-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+
+/* ==== @mo:rain ==== */
+.mo-rain{position:relative;overflow:hidden}
+.mo-rain::before{content:"";position:absolute;inset:-40px 0 0;pointer-events:none;background:repeating-linear-gradient(100deg,transparent 0 22px,rgba(255,255,255,.55) 22px 23.5px),repeating-linear-gradient(100deg,transparent 0 37px,rgba(255,255,255,.35) 37px 38px);background-size:100% 40px,100% 64px;animation:mo-rain var(--mo-dur,.5s) linear infinite}
+@keyframes mo-rain{to{background-position:-7px 40px,-11px 64px}}
+
+/* ==== @mo:quake ==== */
+.mo-quake{display:inline-block;animation:mo-quake var(--mo-dur,2.6s) ease-in-out infinite}
+@keyframes mo-quake{0%,46%,100%{transform:none}4%,12%,20%,28%,36%{transform:translate(-4px,1px) rotate(-2deg)}8%,16%,24%,32%,40%{transform:translate(4px,-1px) rotate(2deg)}}
+
+/* ==== @mo:flame ==== */
+.mo-flame{position:relative;width:var(--mo-size,48px);aspect-ratio:1;display:inline-block}
+.mo-flame::before,.mo-flame::after{content:"";position:absolute;left:50%;bottom:0;border-radius:50% 0 50% 50%;transform-origin:50% 100%}
+.mo-flame::before{width:70%;height:70%;margin-left:-35%;background:var(--mo-danger);animation:mo-flame var(--mo-dur,.9s) ease-in-out infinite alternate}
+.mo-flame::after{width:40%;height:40%;margin-left:-20%;background:var(--mo-warn);animation:mo-flame var(--mo-dur,.9s) ease-in-out -.3s infinite alternate}
+@keyframes mo-flame{0%{transform:rotate(-45deg) scale(1)}50%{transform:rotate(-40deg) scale(1.08,.94)}100%{transform:rotate(-50deg) scale(.94,1.08)}}
+
+/* ==== @mo:wind ==== */
+.mo-wind{display:inline-block;transform-origin:50% 100%;animation:mo-wind var(--mo-dur,1.6s) ease-in-out infinite}
+@keyframes mo-wind{0%,100%{transform:rotate(-3deg) skewX(-2deg)}50%{transform:rotate(9deg) skewX(6deg)}}
+
+/* ==== @mo:icon-draw ==== */
+.mo-icon-draw{width:var(--mo-size,72px);overflow:visible}
+.mo-icon-draw :is(path,rect,circle,polyline,line){fill:none;stroke:var(--mo-color);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;animation:mo-icon-draw var(--mo-dur,2.8s) var(--mo-ease-inout) infinite}
+@keyframes mo-icon-draw{0%{stroke-dashoffset:1}45%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+
+/* ==== @mo:mascot ==== */
+/* 吉祥物「安安」：小房子造型。共用零件，搭配 .mo-mascot--* 動作 */
+.mo-mascot{position:relative;display:inline-block;width:var(--mo-size,120px)}
+.mo-mascot svg{display:block;width:100%;height:auto;overflow:visible}
+.mo-mascot svg *{transform-box:fill-box}
+.mo-m-shadow{fill:rgba(0,40,80,.13);transform-origin:center}
+.mo-m-body{transform-origin:50% 100%}
+.mo-m-house{fill:#FFF8EC;stroke:var(--mo-color);stroke-width:4}
+.mo-m-roof{fill:var(--mo-m-roof,var(--mo-color));stroke:var(--mo-m-roof,var(--mo-color));stroke-width:9;stroke-linejoin:round;stroke-linecap:round;transition:fill .3s,stroke .3s}
+.mo-m-chimney{fill:var(--mo-accent)}
+.mo-m-arm{fill:var(--mo-color)}
+.mo-m-arm-r{transform-origin:20% 15%}
+.mo-m-arm-l{transform-origin:80% 15%}
+.mo-m-eyes{fill:var(--mo-ink);transform-origin:center;animation:mo-m-blink var(--mo-blink,4.2s) infinite}
+.mo-m-cheek{fill:#F6A6A0;opacity:.85}
+.mo-m-mouth{fill:none;stroke:var(--mo-ink);stroke-width:3;stroke-linecap:round;transform-origin:center}
+.mo-m-mark{opacity:0;fill:var(--mo-danger);font:900 26px sans-serif;transform-origin:50% 100%}
+.mo-m-bubble{position:absolute;left:58%;top:-8%;padding:.35em .75em;border-radius:14px 14px 14px 4px;background:#fff;color:var(--mo-ink);font-weight:700;font-size:.9em;white-space:nowrap;box-shadow:0 6px 16px -8px rgba(0,40,80,.45);transform-origin:0 100%}
+@keyframes mo-m-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+
+/* ==== @mo:mascot-idle ==== */
+.mo-mascot--idle .mo-m-body{animation:mo-m-idle var(--mo-dur,2.6s) ease-in-out infinite}
+.mo-mascot--idle .mo-m-shadow{animation:mo-m-shadow var(--mo-dur,2.6s) ease-in-out infinite}
+@keyframes mo-m-idle{0%,100%{transform:scale(1,1)}50%{transform:scale(1.03,.97)}}
+@keyframes mo-m-shadow{50%{transform:scaleX(1.06)}}
+
+/* ==== @mo:mascot-blink ==== */
+.mo-mascot--blink .mo-m-eyes{animation:mo-m-blink2 var(--mo-dur,2.4s) infinite}
+@keyframes mo-m-blink2{0%,40%,52%,60%,100%{transform:scaleY(1)}46%,56%{transform:scaleY(.1)}}
+
+/* ==== @mo:mascot-wave ==== */
+.mo-mascot--wave .mo-m-arm-r{animation:mo-m-wave var(--mo-dur,1.4s) ease-in-out infinite}
+.mo-mascot--wave .mo-m-body{animation:mo-m-tilt var(--mo-dur,1.4s) ease-in-out infinite}
+@keyframes mo-m-wave{0%,100%{transform:rotate(-155deg)}50%{transform:rotate(-115deg)}}
+@keyframes mo-m-tilt{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+
+/* ==== @mo:mascot-jump ==== */
+.mo-mascot--jump .mo-m-body{animation:mo-m-jump var(--mo-dur,1.2s) var(--mo-ease-out) infinite}
+.mo-mascot--jump .mo-m-shadow{animation:mo-m-jump-sh var(--mo-dur,1.2s) var(--mo-ease-out) infinite}
+.mo-mascot--jump .mo-m-arm-r{animation:mo-m-arm-up var(--mo-dur,1.2s) var(--mo-ease-out) infinite}
+.mo-mascot--jump .mo-m-arm-l{animation:mo-m-arm-up-l var(--mo-dur,1.2s) var(--mo-ease-out) infinite}
+@keyframes mo-m-jump{0%,100%{transform:none}15%{transform:scale(1.12,.86)}40%{transform:translateY(-34px) scale(.94,1.08)}62%{transform:none}70%{transform:scale(1.1,.9)}80%{transform:none}}
+@keyframes mo-m-jump-sh{0%,62%,100%{transform:none}40%{transform:scale(.55);opacity:.5}}
+@keyframes mo-m-arm-up{0%,15%,70%,100%{transform:none}40%{transform:rotate(-130deg)}}
+@keyframes mo-m-arm-up-l{0%,15%,70%,100%{transform:none}40%{transform:rotate(130deg)}}
+
+/* ==== @mo:mascot-talk ==== */
+.mo-mascot--talk .mo-m-mouth{animation:mo-m-talk .32s ease-in-out infinite alternate}
+.mo-mascot--talk .mo-m-bubble{animation:mo-m-bubble var(--mo-dur,3s) var(--mo-ease-spring) infinite}
+@keyframes mo-m-talk{to{transform:scale(.8,2.2)}}
+@keyframes mo-m-bubble{0%{opacity:0;transform:scale(0)}12%,85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.8)}}
+
+/* ==== @mo:mascot-alert ==== */
+.mo-mascot--alert{--mo-m-roof:var(--mo-danger)}
+.mo-mascot--alert .mo-m-body{animation:mo-quake var(--mo-dur,1.6s) ease-in-out infinite}
+.mo-mascot--alert .mo-m-mark{animation:mo-m-mark var(--mo-dur,1.6s) var(--mo-ease-spring) infinite}
+.mo-mascot--alert .mo-m-mouth{transform:scale(.7,-1)}
+.mo-mascot--alert .mo-m-arm-r{transform:rotate(-160deg)}
+@keyframes mo-m-mark{0%,100%{opacity:0;transform:scale(0)}15%,80%{opacity:1;transform:scale(1)}}
+
+/* ==== @mo:mascot-peek ==== */
+.mo-peek{position:relative;overflow:hidden;height:calc(var(--mo-size,120px) * .75)}
+.mo-peek .mo-mascot{position:absolute;bottom:0;left:50%;margin-left:calc(var(--mo-size,120px) / -2);animation:mo-m-peek var(--mo-dur,4s) var(--mo-ease-out) infinite}
+@keyframes mo-m-peek{0%,8%{transform:translateY(100%)}25%,70%{transform:translateY(22%) rotate(-8deg)}40%{transform:translateY(22%) rotate(6deg)}55%{transform:translateY(22%) rotate(-4deg)}85%,100%{transform:translateY(100%)}}
